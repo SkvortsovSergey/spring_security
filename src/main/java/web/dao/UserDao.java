@@ -1,11 +1,12 @@
 package web.dao;
 
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import web.model.User;
 
 import java.util.List;
 
-public interface UserDao {
+public interface UserDao  {
 
     void addUser(User user);
 
@@ -15,5 +16,5 @@ public interface UserDao {
 
     void update(User user,long id);
     User getUserById(long id);
-    User getUserByLogin(String login);
+    User getUserByUsername (String login);
 }

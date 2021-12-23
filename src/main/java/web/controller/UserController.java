@@ -1,6 +1,7 @@
 package web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class UserController {
     @GetMapping(value = {"/", "/index"})
     public String login (Model model) {
         model.addAttribute("usersList", userService.getAllUsers());
-        return "login";
+        return "index";
     }
 
     @GetMapping(value = {"/admin"})
@@ -30,19 +31,19 @@ public class UserController {
         return "index";
     }
 
-    @DeleteMapping("/{id}/admin")
+    @DeleteMapping("/admin/{id}")
     public String deleteUser (@PathVariable(value = "id") long id) {
         userService.removeUserById(id);
         return "redirect:/admin";
     }
 
-    @PatchMapping("/{id}/admin")
+    @PatchMapping("/admin/{id}")
     public String updateUser (@PathVariable(value = "id") long id, @ModelAttribute("User") User user) {
         userService.update(user, id);
         return "redirect:/admin";
     }
 
-    @GetMapping("/{id}/admin/update")
+    @GetMapping("/admin/{id}/update")
     public String getUser (@PathVariable("id") long id, Model model) {
         model.addAttribute("user", userService.getUserById(id));
         return "update";
@@ -59,9 +60,11 @@ public class UserController {
         userService.addUser(user);
         return "redirect:/admin";
     }
-    @GetMapping
-    public String userInfo(Model model){
 
+    @GetMapping("/user")
+    public String userInfo (@CurrentSecurityContext(
+            expression = "authentication.principal") User principal, Model model) {
+        model.addAttribute("user", principal);
         return "user-info";
     }
 }

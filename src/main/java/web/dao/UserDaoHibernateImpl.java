@@ -47,7 +47,7 @@ public class UserDaoHibernateImpl implements UserDao {
     }
 
     @Override
-    public User getUserByLogin (String login) {
+    public User getUserByUsername (String login) {
 
         if (!userMap.containsKey(login)) {
             return null;

@@ -1,21 +1,15 @@
 package web.model;
 
-import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
 public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,17 +22,75 @@ public class User implements UserDetails {
 
     @Column
     private Byte age;
-    @Column(nullable = false,unique = true)
-    private String login;
-    @Column
+
+    @Column(name = "username", nullable = false, unique = true)
+    private String username;
+
+    @Column(name = "password")
     private String password;
 
+    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "users_id"),
+            inverseJoinColumns = @JoinColumn(name = "roles_id"))
     private Set<Role> roles;
+
+    public User () {
+    }
 
     public User (String name, String lastName, Byte age) {
         this.name = name;
         this.lastName = lastName;
         this.age = age;
+    }
+
+    public Long getId () {
+        return id;
+    }
+
+    public void setId (Long id) {
+        this.id = id;
+    }
+
+    public String getName () {
+        return name;
+    }
+
+    public void setName (String name) {
+        this.name = name;
+    }
+
+    public String getLastName () {
+        return lastName;
+    }
+
+    public void setLastName (String lastName) {
+        this.lastName = lastName;
+    }
+
+    public Byte getAge () {
+        return age;
+    }
+
+    public void setAge (Byte age) {
+        this.age = age;
+    }
+
+    public void setUsername (String username) {
+        this.username = username;
+    }
+
+    public void setPassword (String password) {
+        this.password = password;
+    }
+
+    public Set<Role> getRoles () {
+        return roles;
+    }
+
+    public void setRoles (Set<Role> roles) {
+        this.roles = roles;
     }
 
     @Override
@@ -53,7 +105,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername () {
-        return login;
+        return username;
     }
 
     @Override
@@ -73,6 +125,9 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled () {
-        return false;
+        return true;
     }
-}
+
+
+    }
+
