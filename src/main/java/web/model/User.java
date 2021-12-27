@@ -4,93 +4,70 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.Collection;
+import java.util.Set;
 
+// Для того, чтобы в дальнейшим использовать класс User в Spring Security, он должен реализовывать интерфейс UserDetails.
+// UserDetails можно представить, как адаптер между БД пользователей и тем что требуется Spring Security внутри SecurityContextHolder
 @Entity
 @Table(name = "users")
 public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "id")
+    private int id;
 
-    @Column
-    private String name;
-
-    @Column
-    private String lastName;
-
-    @Column
-    private Byte age;
-
-    @Column(name = "username", nullable = false, unique = true)
+    @Column(name = "username", unique = true)
     private String username;
 
     @Column(name = "password")
     private String password;
 
-    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "users_roles",
-            joinColumns = @JoinColumn(name = "users_id"),
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "city")
+    private String city;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "users_id"),
             inverseJoinColumns = @JoinColumn(name = "roles_id"))
     private Set<Role> roles;
 
     public User () {
     }
 
-    public User (String name, String lastName, Byte age) {
-        this.name = name;
-        this.lastName = lastName;
-        this.age = age;
+    public User (int id, String username, String city, String email, String password, Set<Role> roles) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.city = city;
+        this.roles = roles;
     }
 
-    public Long getId () {
+    public User (String username, String city, String email, String password, Set<Role> roles) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.city = city;
+        this.roles = roles;
+    }
+
+    public int getId () {
         return id;
     }
 
-    public void setId (Long id) {
+    public void setId (int id) {
         this.id = id;
     }
 
-    public String getName () {
-        return name;
+    public String getUserName () {
+        return username;
     }
 
-    public void setName (String name) {
-        this.name = name;
-    }
-
-    public String getLastName () {
-        return lastName;
-    }
-
-    public void setLastName (String lastName) {
-        this.lastName = lastName;
-    }
-
-    public Byte getAge () {
-        return age;
-    }
-
-    public void setAge (Byte age) {
-        this.age = age;
-    }
-
-    public void setUsername (String username) {
+    public void setUserName (String username) {
         this.username = username;
-    }
-
-    public void setPassword (String password) {
-        this.password = password;
-    }
-
-    public Set<Role> getRoles () {
-        return roles;
-    }
-
-    public void setRoles (Set<Role> roles) {
-        this.roles = roles;
     }
 
     @Override
@@ -128,6 +105,48 @@ public class User implements UserDetails {
         return true;
     }
 
-
+    public void setPassword (String password) {
+        this.password = password;
     }
+
+    public String getEmail () {
+        return email;
+    }
+
+    public void setEmail (String email) {
+        this.email = email;
+    }
+
+    public String getCity () {
+        return city;
+    }
+
+    public void setCity (String city) {
+        this.city = city;
+    }
+
+    public Set<Role> getRoles () {
+        return roles;
+    }
+
+    public void setRoles (Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    @Override
+    public String toString () {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", city='" + city + '\'' +
+                ", roles=" + roles +
+                '}';
+    }
+
+
+}
+
+
 
